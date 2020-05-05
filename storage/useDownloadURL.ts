@@ -9,21 +9,17 @@ export default (storageRef?: storage.Reference | null): DownloadURLHook => {
     string,
     FirebaseError
   >();
+  if (storageRef === null) return [undefined, true, undefined];
+
   const ref = useComparatorRef(storageRef, isEqual, reset);
 
-  useEffect(
-    () => {
-      if (!ref.current) {
-        setValue(undefined);
-        return;
-      }
-      ref.current
-        .getDownloadURL()
-        .then(setValue)
-        .catch(setError);
-    },
-    [ref.current]
-  );
+  useEffect(() => {
+    if (!ref.current) {
+      setValue(undefined);
+      return;
+    }
+    ref.current.getDownloadURL().then(setValue).catch(setError);
+  }, [ref.current]);
 
   return [value, loading, error];
 };

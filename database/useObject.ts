@@ -7,28 +7,27 @@ export type ObjectHook = LoadingHook<database.DataSnapshot, FirebaseError>;
 export type ObjectValHook<T> = LoadingHook<T, FirebaseError>;
 
 export const useObject = (query?: database.Query | null): ObjectHook => {
+  if (query === null) return [undefined, true, undefined];
+
   const { error, loading, reset, setError, setValue, value } = useLoadingValue<
     database.DataSnapshot,
     FirebaseError
   >();
   const ref = useIsEqualRef(query, reset);
 
-  useEffect(
-    () => {
-      const query = ref.current;
-      if (!query) {
-        setValue(undefined);
-        return;
-      }
+  useEffect(() => {
+    const query = ref.current;
+    if (!query) {
+      setValue(undefined);
+      return;
+    }
 
-      query.on('value', setValue, setError);
+    query.on('value', setValue, setError);
 
-      return () => {
-        query.off('value', setValue);
-      };
-    },
-    [ref.current]
-  );
+    return () => {
+      query.off('value', setValue);
+    };
+  }, [ref.current]);
 
   return [value, loading, error];
 };

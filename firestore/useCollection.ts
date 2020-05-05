@@ -12,33 +12,32 @@ export const useCollection = (
     snapshotListenOptions?: firestore.SnapshotListenOptions;
   }
 ): CollectionHook => {
+  if (query === null) return [undefined, true, undefined];
+
   const { error, loading, reset, setError, setValue, value } = useLoadingValue<
     firestore.QuerySnapshot,
     Error
   >();
   const ref = useIsEqualRef(query, reset);
 
-  useEffect(
-    () => {
-      if (!ref.current) {
-        setValue(undefined);
-        return;
-      }
-      const listener =
-        options && options.snapshotListenOptions
-          ? ref.current.onSnapshot(
-              options.snapshotListenOptions,
-              setValue,
-              setError
-            )
-          : ref.current.onSnapshot(setValue, setError);
+  useEffect(() => {
+    if (!ref.current) {
+      setValue(undefined);
+      return;
+    }
+    const listener =
+      options && options.snapshotListenOptions
+        ? ref.current.onSnapshot(
+            options.snapshotListenOptions,
+            setValue,
+            setError
+          )
+        : ref.current.onSnapshot(setValue, setError);
 
-      return () => {
-        listener();
-      };
-    },
-    [ref.current]
-  );
+    return () => {
+      listener();
+    };
+  }, [ref.current]);
 
   return [value, loading, error];
 };
@@ -59,7 +58,7 @@ export const useCollectionData = <T>(
   });
   return [
     (value
-      ? value.docs.map(doc => snapshotToData(doc, idField))
+      ? value.docs.map((doc) => snapshotToData(doc, idField))
       : undefined) as T[],
     loading,
     error,

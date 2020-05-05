@@ -9,6 +9,8 @@ export type ListKeysHook = LoadingHook<string[], FirebaseError>;
 export type ListValsHook<T> = LoadingHook<T[], FirebaseError>;
 
 export const useList = (query?: database.Query | null): ListHook => {
+  if (query === null) return [undefined, true, undefined];
+
   const [state, dispatch] = useListReducer();
 
   const ref = useIsEqualRef(query, () => dispatch({ type: 'reset' }));
@@ -70,7 +72,7 @@ export const useList = (query?: database.Query | null): ListHook => {
 export const useListKeys = (query?: database.Query | null): ListKeysHook => {
   const [value, loading, error] = useList(query);
   return [
-    value ? value.map(snapshot => snapshot.key as string) : undefined,
+    value ? value.map((snapshot) => snapshot.key as string) : undefined,
     loading,
     error,
   ];
@@ -85,7 +87,7 @@ export const useListVals = <T>(
   const [value, loading, error] = useList(query);
   return [
     value
-      ? value.map(snapshot =>
+      ? value.map((snapshot) =>
           snapshotToData(snapshot, options ? options.keyField : undefined)
         )
       : undefined,

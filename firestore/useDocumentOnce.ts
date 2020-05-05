@@ -12,25 +12,24 @@ export const useDocumentOnce = (
     getOptions?: firestore.GetOptions;
   }
 ): DocumentOnceHook => {
+  if (docRef === null) return [undefined, true, undefined];
+
   const { error, loading, reset, setError, setValue, value } = useLoadingValue<
     firestore.DocumentSnapshot,
     Error
   >();
   const ref = useIsEqualRef(docRef, reset);
 
-  useEffect(
-    () => {
-      if (!ref.current) {
-        setValue(undefined);
-        return;
-      }
-      ref.current
-        .get(options ? options.getOptions : undefined)
-        .then(setValue)
-        .catch(setError);
-    },
-    [ref.current]
-  );
+  useEffect(() => {
+    if (!ref.current) {
+      setValue(undefined);
+      return;
+    }
+    ref.current
+      .get(options ? options.getOptions : undefined)
+      .then(setValue)
+      .catch(setError);
+  }, [ref.current]);
 
   return [value, loading, error];
 };

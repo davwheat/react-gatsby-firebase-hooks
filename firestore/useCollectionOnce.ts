@@ -12,25 +12,24 @@ export const useCollectionOnce = (
     getOptions?: firestore.GetOptions;
   }
 ): CollectionOnceHook => {
+  if (query === null) return [undefined, true, undefined];
+
   const { error, loading, reset, setError, setValue, value } = useLoadingValue<
     firestore.QuerySnapshot,
     Error
   >();
   const ref = useIsEqualRef(query, reset);
 
-  useEffect(
-    () => {
-      if (!ref.current) {
-        setValue(undefined);
-        return;
-      }
-      ref.current
-        .get(options ? options.getOptions : undefined)
-        .then(setValue)
-        .catch(setError);
-    },
-    [ref.current]
-  );
+  useEffect(() => {
+    if (!ref.current) {
+      setValue(undefined);
+      return;
+    }
+    ref.current
+      .get(options ? options.getOptions : undefined)
+      .then(setValue)
+      .catch(setError);
+  }, [ref.current]);
 
   return [value, loading, error];
 };
@@ -47,7 +46,7 @@ export const useCollectionDataOnce = <T>(
   const [value, loading, error] = useCollectionOnce(query, { getOptions });
   return [
     (value
-      ? value.docs.map(doc => snapshotToData(doc, idField))
+      ? value.docs.map((doc) => snapshotToData(doc, idField))
       : undefined) as T[],
     loading,
     error,

@@ -1,4 +1,10 @@
-# React Firebase Hooks
+# React Gatsby Firebase Hooks
+
+Modified by davwheat for use with [alexluong's gatsby-plugin-firebase](https://github.com/alexluong/gatsby-packages/tree/firebase/0.2.0/packages/gatsby-plugin-firebase).
+
+**CAUTION: The documentation is different for this modified set of hooks!**
+
+---
 
 A set of reusable [React Hooks](https://reactjs.org/docs/hooks-intro.html) for [Firebase](https://firebase.google.com/).
 

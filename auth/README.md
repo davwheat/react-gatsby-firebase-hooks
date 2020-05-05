@@ -10,19 +10,21 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 
 List of Auth hooks:
 
-- [useAuthState](#useauthstate)
+- [React Firebase Hooks - Auth](#react-firebase-hooks---auth)
+    - [useAuthState](#useauthstate)
+      - [Full Example](#full-example)
 
 ### useAuthState
 
 ```
-const [user, loading, error] = useAuthState(auth);
+const [user, loading, error] = useAuthState(firebase);
 ```
 
 Retrieve and monitor the authentication state from Firebase.
 
 The `useAuthState` hook takes the following parameters:
 
-- `auth`: `firebase.auth.Auth` instance for the app you would like to monitor
+- `firebase`: The `firebase` value from `gatsby-plugin-firebase`
 
 Returns:
 
@@ -32,11 +34,12 @@ Returns:
 
 #### Full Example
 
-```js
+```jsx
+import firebase from 'gatsby-plugin-firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 const CurrentUser = () => {
-  const [user, initialising, error] = useAuthState(firebase.auth());
+  const [user, loading, error] = useAuthState(firebase);
   const login = () => {
     firebase.auth().signInWithEmailAndPassword('test@test.com', 'password');
   };
@@ -44,10 +47,10 @@ const CurrentUser = () => {
     firebase.auth().signOut();
   };
 
-  if (initialising) {
+  if (loading) {
     return (
       <div>
-        <p>Initialising User...</p>
+        <p>Loading User...</p>
       </div>
     );
   }

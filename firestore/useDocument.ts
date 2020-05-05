@@ -12,33 +12,32 @@ export const useDocument = (
     snapshotListenOptions?: firestore.SnapshotListenOptions;
   }
 ): DocumentHook => {
+  if (docRef === null) return [undefined, true, undefined];
+
   const { error, loading, reset, setError, setValue, value } = useLoadingValue<
     firestore.DocumentSnapshot,
     Error
   >();
   const ref = useIsEqualRef(docRef, reset);
 
-  useEffect(
-    () => {
-      if (!ref.current) {
-        setValue(undefined);
-        return;
-      }
-      const listener =
-        options && options.snapshotListenOptions
-          ? ref.current.onSnapshot(
-              options.snapshotListenOptions,
-              setValue,
-              setError
-            )
-          : ref.current.onSnapshot(setValue, setError);
+  useEffect(() => {
+    if (!ref.current) {
+      setValue(undefined);
+      return;
+    }
+    const listener =
+      options && options.snapshotListenOptions
+        ? ref.current.onSnapshot(
+            options.snapshotListenOptions,
+            setValue,
+            setError
+          )
+        : ref.current.onSnapshot(setValue, setError);
 
-      return () => {
-        listener();
-      };
-    },
-    [ref.current]
-  );
+    return () => {
+      listener();
+    };
+  }, [ref.current]);
 
   return [value, loading, error];
 };
